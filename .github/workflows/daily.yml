@@ -1,0 +1,29 @@
+name: Daily Contribution
+
+on:
+  schedule:
+    - cron: "0 10 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure log exists
+        run: |
+          touch log.md
+
+      - name: Update log
+        run: |
+          echo "- $(date -u)" >> log.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add log.md
+          git commit -m "daily contribution $(date -u)" || echo "Nothing to commit"
+          git push
